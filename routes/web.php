@@ -9,8 +9,12 @@ use App\Http\Controllers\ReportController;
 use App\Http\Controllers\TrackingController;
 use App\Http\Controllers\ProfileController;
 
-// ── Public ────────────────────────────────────────────────────────────────────
+// ── Public Landing Page ───────────────────────────────────────────────────────
+Route::get('/', function () {
+    return view('home'); // This will be our new landing page
+})->name('home');
 
+// ── Authentication ────────────────────────────────────────────────────────────
 Route::get('/login',  [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])->name('login.post');
 Route::post('/logout',[AuthController::class, 'logout'])->name('logout');
@@ -18,15 +22,11 @@ Route::post('/logout',[AuthController::class, 'logout'])->name('logout');
 Route::get('/lacak',  [TrackingController::class, 'index'])->name('tracking');
 Route::post('/lacak', [TrackingController::class, 'track'])->name('tracking.result');
 
-// ── Authenticated ──────────────────────────────────────────────────────────────
-
+// ── Authenticated System ──────────────────────────────────────────────────────
 Route::middleware(['auth', 'active'])->group(function () {
-
-    Route::get('/', fn() => redirect()->route('dashboard'));
-
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    // Orders – index & create & edit render Livewire components via controller views
+    // Orders
     Route::get('/orders',              [OrderController::class, 'index'])->name('orders.index');
     Route::get('/orders/create',       [OrderController::class, 'create'])->name('orders.create');
     Route::post('/orders',             [OrderController::class, 'store'])->name('orders.store');
@@ -45,11 +45,8 @@ Route::middleware(['auth', 'active'])->group(function () {
 
     Route::get('/laporan', [ReportController::class, 'index'])->name('report');
 
-    Route::middleware('auth')->group(function () {
-    // ... route dashboard, order, pelanggan, laporan yang sudah ada ...
-
-    // Route Profil
-    Route::get('/profil', [ProfileController::class, 'index'])->name('profile.index');
-    Route::put('/profil', [ProfileController::class, 'update'])->name('profile.update');
-});
+    // Profile
+    Route::get('/profil',      [ProfileController::class, 'index'])->name('profile.index');
+    Route::get('/profil/edit', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('/profil',      [ProfileController::class, 'update'])->name('profile.update');
 });
