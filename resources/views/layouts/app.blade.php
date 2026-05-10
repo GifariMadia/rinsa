@@ -9,7 +9,7 @@
     {{-- Fonts --}}
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
 
     {{-- App CSS (compiled via Vite) --}}
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -23,7 +23,26 @@
     <nav class="nav">
         <a href="{{ route('dashboard') }}" class="nav-brand">Rinsa</a>
         <div class="nav-right">
-            <span class="nav-user">{{ auth()->user()->name }}</span>
+            
+            {{-- Nama User sekarang menjadi link ke Halaman Profil --}}
+            <a href="{{ route('profile.index') }}" 
+               class="nav-user" 
+               style="text-decoration: none; display: flex; align-items: center; gap: 10px; transition: opacity 0.2s;"
+               onmouseover="this.style.opacity='0.8'" 
+               onmouseout="this.style.opacity='1'">
+                
+                {{-- Logika Avatar & Inisial --}}
+                @if(auth()->user()->avatar)
+                    <img src="{{ asset('storage/' . auth()->user()->avatar) }}" alt="Avatar" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; box-shadow: 0 2px 6px rgba(0,0,0,0.15);">
+                @else
+                    <span style="background: linear-gradient(135deg, var(--rinsa-gold) 0%, var(--rinsa-green) 100%); color: white; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: bold; box-shadow: 0 2px 6px rgba(0,0,0,0.15);">
+                        {{ substr(auth()->user()->name, 0, 1) }}
+                    </span>
+                @endif
+                
+                {{ auth()->user()->name }}
+            </a>
+
             <form method="POST" action="{{ route('logout') }}" class="inline">
                 @csrf
                 <button type="submit" class="nav-logout">Keluar</button>
@@ -62,19 +81,32 @@
         {{-- Main Content --}}
         <main class="main">
 
-            {{-- Flash Messages --}}
-            @if(session('success'))
-                <div class="alert alert-success">{{ session('success') }}</div>
-            @endif
-            @if($errors->any())
-                <div class="alert alert-danger">
-                    <ul style="margin:0;padding-left:1.25rem">
-                        @foreach($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
+            {{-- Modern Toast Notifications --}}
+            <div class="toast-container">
+                @if(session('success'))
+                    <div class="toast-modern toast-success">
+                        <span class="toast-icon">✨</span>
+                        <div>
+                            <div class="toast-title">Berhasil!</div>
+                            <div class="toast-msg">{{ session('success') }}</div>
+                        </div>
+                    </div>
+                @endif
+
+                @if($errors->any())
+                    <div class="toast-modern toast-error">
+                        <span class="toast-icon">⚠️</span>
+                        <div>
+                            <div class="toast-title">Ada Masalah</div>
+                            <div class="toast-msg">
+                                @foreach($errors->all() as $error)
+                                    <div>{{ $error }}</div>
+                                @endforeach
+                            </div>
+                        </div>
+                    </div>
+                @endif
+            </div>
 
             @yield('content')
         </main>

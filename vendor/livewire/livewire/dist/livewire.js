@@ -1451,8 +1451,8 @@ ${expression ? 'Expression: "' + expression + '"\n\n' : ""}`, el);
   var directiveOrder = [
     "ignore",
     "ref",
-    "data",
     "id",
+    "data",
     "anchor",
     "bind",
     "init",
@@ -2384,7 +2384,7 @@ ${expression ? 'Expression: "' + expression + '"\n\n' : ""}`, el);
     get transaction() {
       return transaction;
     },
-    version: "3.15.9",
+    version: "3.15.12",
     flushAndStopDeferringMutations,
     dontAutoEvaluateFunctions,
     disableEffectScheduling,
@@ -3233,8 +3233,8 @@ ${expression ? 'Expression: "' + expression + '"\n\n' : ""}`, el);
       }
     };
     mutateDom(() => {
-      placeInDom(clone2, target, modifiers);
       skipDuringClone(() => {
+        placeInDom(clone2, target, modifiers);
         initTree(clone2);
       })();
     });
@@ -3817,7 +3817,7 @@ ${expression ? 'Expression: "' + expression + '"\n\n' : ""}`, el);
     evaluateItems((items) => {
       if (isNumeric3(items))
         items = Array.from({ length: items }, (_, i) => i + 1);
-      if (items === void 0)
+      if (items === void 0 || items === null)
         items = [];
       if (items instanceof Set)
         items = Array.from(items);
@@ -3867,6 +3867,8 @@ ${expression ? 'Expression: "' + expression + '"\n\n' : ""}`, el);
             }
             return;
           }
+          if (templateEl.content.children.length > 1)
+            warn("x-for templates require a single root element, additional elements will be ignored.", templateEl);
           let clone2 = document.importNode(templateEl.content, true).firstElementChild;
           let reactiveScope = reactive(scope2);
           addScopeToNode(clone2, reactiveScope, templateEl);
@@ -3924,20 +3926,22 @@ ${expression ? 'Expression: "' + expression + '"\n\n' : ""}`, el);
     return scopeVariables;
   }
   function isNumeric3(subject) {
-    return !Array.isArray(subject) && !isNaN(subject);
+    return typeof subject !== "object" && !isNaN(subject);
   }
   function isObject22(subject) {
     return typeof subject === "object" && !Array.isArray(subject);
   }
   function handler3() {
   }
-  handler3.inline = skipDuringClone((el, { expression }, { cleanup: cleanup2 }) => {
+  handler3.inline = (el, { expression }, { cleanup: cleanup2 }) => {
     let root = closestRoot(el);
+    if (!root)
+      return;
     if (!root._x_refs)
       root._x_refs = {};
     root._x_refs[expression] = el;
     cleanup2(() => delete root._x_refs[expression]);
-  });
+  };
   directive("ref", handler3);
   directive("if", (el, { expression }, { effect: effect3, cleanup: cleanup2 }) => {
     if (el.tagName.toLowerCase() !== "template")
@@ -4260,8 +4264,10 @@ ${expression ? 'Expression: "' + expression + '"\n\n' : ""}`, el);
       let handleResponse = (response) => {
         let { snapshot, effects } = response;
         respond();
-        this.component.mergeNewSnapshot(snapshot, effects, updates);
-        this.component.processEffects(this.component.effects);
+        module_default.transaction(() => {
+          this.component.mergeNewSnapshot(snapshot, effects, updates);
+          this.component.processEffects(this.component.effects);
+        });
         if (effects["returns"]) {
           let returns = effects["returns"];
           let returnHandlerStack = this.calls.map(({ handleReturn }) => handleReturn);
@@ -6686,7 +6692,13 @@ ${expression ? 'Expression: "' + expression + '"\n\n' : ""}`, el);
     let overflow = document.documentElement.style.overflow;
     let paddingRight = document.documentElement.style.paddingRight;
     let scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+    let scrollbarGutter = window.getComputedStyle(document.documentElement).scrollbarGutter;
     document.documentElement.style.overflow = "hidden";
+    if (scrollbarGutter && scrollbarGutter !== "auto") {
+      return () => {
+        document.documentElement.style.overflow = overflow;
+      };
+    }
     document.documentElement.style.paddingRight = `${scrollbarWidth}px`;
     return () => {
       document.documentElement.style.overflow = overflow;
@@ -8043,14 +8055,14 @@ ${expression ? 'Expression: "' + expression + '"\n\n' : ""}`, el);
       }
     });
     Alpine3.directive("anchor", Alpine3.skipDuringClone((el, { expression, modifiers, value }, { evaluate: evaluate22, effect: effect3, cleanup: cleanup2 }) => {
-      let { placement, offsetValue, unstyled } = getOptions(modifiers);
+      let { placement, offsetValue, unstyled, strategy, allowFlip } = getOptions(modifiers);
       el._x_anchor = Alpine3.reactive({ x: 0, y: 0 });
       let previousReference = null;
       let release2 = null;
-      let effector = effect3(() => {
+      effect3(() => {
         let reference = evaluate22(expression);
         if (!reference)
-          throw "Alpine: no element provided to x-anchor...";
+          return;
         if (previousReference !== reference) {
           if (release2)
             release2();
@@ -8059,9 +8071,10 @@ ${expression ? 'Expression: "' + expression + '"\n\n' : ""}`, el);
             let previousValue;
             computePosition2(reference, el, {
               placement,
-              middleware: [flip(), shift({ padding: 5 }), offset(offsetValue)]
+              strategy,
+              middleware: [allowFlip && flip(), shift({ padding: 5 }), offset(offsetValue)]
             }).then(({ x, y }) => {
-              unstyled || setStyles2(el, x, y);
+              unstyled || setStyles2(el, x, y, strategy);
               if (JSON.stringify({ x, y }) !== previousValue) {
                 el._x_anchor.x = x;
                 el._x_anchor.y = y;
@@ -8073,22 +8086,21 @@ ${expression ? 'Expression: "' + expression + '"\n\n' : ""}`, el);
         }
       });
       cleanup2(() => {
-        effector();
         if (release2)
           release2();
       });
     }, (el, { expression, modifiers, value }, { cleanup: cleanup2, evaluate: evaluate22 }) => {
-      let { placement, offsetValue, unstyled } = getOptions(modifiers);
+      let { placement, offsetValue, unstyled, strategy } = getOptions(modifiers);
       if (el._x_anchor) {
-        unstyled || setStyles2(el, el._x_anchor.x, el._x_anchor.y);
+        unstyled || setStyles2(el, el._x_anchor.x, el._x_anchor.y, strategy);
       }
     }));
   }
-  function setStyles2(el, x, y) {
+  function setStyles2(el, x, y, strategy = "absolute") {
     Object.assign(el.style, {
       left: x + "px",
       top: y + "px",
-      position: "absolute"
+      position: strategy
     });
   }
   function getOptions(modifiers) {
@@ -8100,7 +8112,9 @@ ${expression ? 'Expression: "' + expression + '"\n\n' : ""}`, el);
       offsetValue = modifiers[idx + 1] !== void 0 ? Number(modifiers[idx + 1]) : offsetValue;
     }
     let unstyled = modifiers.includes("no-style");
-    return { placement, offsetValue, unstyled };
+    let allowFlip = !modifiers.includes("noflip");
+    let strategy = modifiers.includes("fixed") ? "fixed" : "absolute";
+    return { placement, offsetValue, unstyled, strategy, allowFlip };
   }
   var module_default7 = src_default7;
 
@@ -8231,7 +8245,9 @@ ${expression ? 'Expression: "' + expression + '"\n\n' : ""}`, el);
       callback((whenReleased) => {
         let handler4 = (e2) => {
           e2.preventDefault();
-          whenReleased();
+          requestAnimationFrame(() => {
+            whenReleased();
+          });
           el.removeEventListener("mouseup", handler4);
         };
         el.addEventListener("mouseup", handler4);

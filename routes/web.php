@@ -7,6 +7,7 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\TrackingController;
+use App\Http\Controllers\ProfileController;
 
 // ── Public ────────────────────────────────────────────────────────────────────
 
@@ -43,4 +44,12 @@ Route::middleware(['auth', 'active'])->group(function () {
     Route::delete('/customers/{customer}',   [CustomerController::class, 'destroy'])->name('customers.destroy');
 
     Route::get('/laporan', [ReportController::class, 'index'])->name('report');
+
+    Route::middleware('auth')->group(function () {
+    // ... route dashboard, order, pelanggan, laporan yang sudah ada ...
+
+    // Route Profil
+    Route::get('/profil', [ProfileController::class, 'index'])->name('profile.index');
+    Route::put('/profil', [ProfileController::class, 'update'])->name('profile.update');
+});
 });
