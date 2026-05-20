@@ -1,182 +1,160 @@
-# Rinsa Laundry — Setup Guide
+# Developer Installation Guide - Rinsa Laundry
 
-> Stack: Laravel 11 + Blade + Vanilla JS + MySQL  
-> *Bersih itu tenang.*
-
----
-
-## Kredensial Demo
-
-| Role  | Email             | Password  |
-|-------|-------------------|-----------|
-| Admin | admin@rinsa.id    | rinsa123  |
-| Kasir | kasir@rinsa.id    | rinsa123  |
-
-**Tracking pelanggan** → `/lacak` (tidak perlu login)
+Dokumen ini adalah panduan komprehensif langkah demi langkah bagi developer untuk melakukan instalasi, setup, dan *running* proyek **Rinsa Laundry** di lingkungan lokal dari nol hingga proyek berjalan penuh (100% *ready* tanpa error).
 
 ---
 
-## Instalasi Lokal
+## 🛠 1. Prasyarat Sistem (Prerequisites)
+Pastikan sistem operasi Anda (Windows/Mac/Linux) telah terinstal program berikut:
+- **PHP** (Minimal versi 8.2)
+- **Composer** (Minimal versi 2.x)
+- **Node.js** (Minimal versi 18.x) dan **NPM**
+- **MySQL Server** (Dapat menggunakan XAMPP, Laragon, MAMP, atau MySQL Community)
+- **Git**
 
-### 1. Clone & install dependencies
+Untuk memverifikasi kesiapan sistem, jalankan perintah ini di terminal Anda:
+```bash
+php -v
+composer -V
+node -v
+npm -v
+mysql -V
+```
+
+---
+
+## 🚀 2. Kloning Repositori
+Clone proyek ke dalam direktori server lokal Anda (misalnya di folder `htdocs` jika memakai XAMPP, atau `www` jika memakai Laragon).
 
 ```bash
-git clone <repo-url> rinsa
+git clone https://github.com/GifariMadia/rinsa.git
 cd rinsa
+```
 
+---
+
+## 📦 3. Instalasi Dependensi (Backend & Frontend)
+Proyek ini menggabungkan backend Laravel dan frontend Vite (Vanilla JS). Anda harus menginstal dependensi untuk keduanya.
+
+```bash
+# Instal dependensi backend PHP (vendor folder)
 composer install
+
+# Instal dependensi Node.js / Frontend (node_modules folder)
 npm install
 ```
 
-### 2. Setup environment
+---
+
+## ⚙️ 4. Konfigurasi Environment (File .env)
+Buat salinan file `.env` dari template yang sudah disediakan.
 
 ```bash
 cp .env.example .env
+```
+
+Buat **App Key** unik untuk mengamankan enkripsi session sistem:
+```bash
 php artisan key:generate
 ```
 
-Edit `.env`:
+Buka file `.env` di text editor (seperti VS Code) dan sesuaikan bagian `DB_` (Database). Pastikan nilainya cocok dengan lokal Anda:
 ```env
-APP_NAME=Rinsa
+APP_NAME="Rinsa Laundry"
 APP_URL=http://localhost:8000
 
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
 DB_PORT=3306
-DB_DATABASE=rinsa_db
-DB_USERNAME=root
-DB_PASSWORD=
+DB_DATABASE=rinsa_db     # Nama database (akan kita buat di langkah 5)
+DB_USERNAME=root         # Username default XAMPP/Laragon
+DB_PASSWORD=             # Kosongkan jika XAMPP default, atau isi jika ada password
 ```
-
-### 3. Buat database & migrate
-
-```bash
-mysql -u root -e "CREATE DATABASE rinsa_db;"
-php artisan migrate
-php artisan db:seed
-```
-
-### 4. Jalankan dev server
-
-```bash
-npm run dev        # terminal 1 (Vite)
-php artisan serve  # terminal 2
-```
-
-Buka `http://localhost:8000` → login atau `/lacak` untuk tracking.
 
 ---
 
-## Deploy ke Railway
+## 🗄️ 5. Setup Database & Seeding (Penting!)
+Pastikan layanan MySQL Anda menyala. Buat database kosong baru bernama `rinsa_db` (bisa lewat phpMyAdmin, DBeaver, atau Command Line).
 
-### Persiapan
-
-1. Buat akun di [railway.app](https://railway.app)
-2. Tambah service **MySQL** dari dashboard Railway
-3. Tambah service **PHP** (pilih template Laravel atau deploy via GitHub)
-
-### Environment Variables di Railway
-
-```
-APP_KEY=<generate dengan: php artisan key:generate --show>
-APP_ENV=production
-APP_DEBUG=false
-APP_URL=https://<your-domain>.railway.app
-
-DB_CONNECTION=mysql
-DB_HOST=<dari Railway MySQL>
-DB_PORT=3306
-DB_DATABASE=railway
-DB_USERNAME=root
-DB_PASSWORD=<dari Railway MySQL>
+Jika membuat via Command Line (CLI):
+```bash
+mysql -u root -p -e "CREATE DATABASE rinsa_db;"
 ```
 
-### Build Command Railway
+Setelah database siap, buat seluruh tabel dan isi dengan **Data Dummy (Seeder)** agar aplikasi langsung "penuh" dengan data akun admin, pelanggan, tipe harga, dan transaksi.
+```bash
+# Menjalankan migrasi tabel sekaligus mengisi data seeder
+php artisan migrate:fresh --seed
+```
+
+---
+
+## 🔗 6. Tautan Penyimpanan (Storage Link)
+Laravel menyimpan file upload (seperti foto/dokumen jika ada) di folder internal. Jalankan perintah ini agar file tersebut bisa diakses publik (dari folder `public` ke `storage/app/public`):
+```bash
+php artisan storage:link
+```
+
+---
+
+## 🏃 7. Menjalankan Aplikasi (Development)
+Untuk menjalankan aplikasi ini secara maksimal di lokal dengan fitur *Hot Module Replacement* (HMR), Anda perlu menjalankan **dua terminal terpisah** di dalam folder `rinsa`.
+
+**Terminal 1 (Menjalankan server Laravel):**
+```bash
+php artisan serve
+```
+*(Terminal ini akan membuat server backend berjalan di: `http://127.0.0.1:8000`)*
+
+**Terminal 2 (Menjalankan Vite asset bundler):**
+```bash
+npm run dev
+```
+*(Terminal ini bertugas memonitor dan meng-compile setiap ada perubahan pada CSS/JS secara live)*
+
+Buka browser Anda dan akses **`http://localhost:8000`**. Proyek kini berjalan penuh!
+
+---
+
+## 🔐 8. Kredensial Login Bawaan (Hasil Seeder)
+Gunakan 3 akun bawaan di bawah ini untuk menguji masing-masing hak akses (Role-Based Access) ke dalam sistem:
+
+- **Login Admin**:
+  - Email: `admin@rinsa.id`
+  - Password: `rinsa123`
+- **Login Kasir**:
+  - Email: `kasir@rinsa.id`
+  - Password: `rinsa123`
+- **Login Customer**:
+  - Email: `customer@rinsa.id`
+  - Password: `rinsa123`
+
+Untuk pengujian halaman publik pelanggan (tanpa login), Anda bisa langsung mengakses rute pelacakan: **`http://localhost:8000/lacak`**.
+
+---
+
+## 🏗️ 9. Persiapan Rilis Server (Production Build)
+Jika proyek sudah siap di-deploy (misalnya ke VPS atau Railway), *matikan* perintah `npm run dev`, lalu jalankan serangkaian perintah *build & cache* ini agar performa maksimal:
 
 ```bash
-composer install --no-dev --optimize-autoloader && \
-npm install && npm run build && \
-php artisan migrate --force && \
-php artisan db:seed --force && \
-php artisan config:cache && \
-php artisan route:cache && \
+# 1. Compile CSS dan JS menjadi file statis (minified)
+npm run build
+
+# 2. Hapus dependensi developer (khusus untuk upload)
+composer install --no-dev --optimize-autoloader
+
+# 3. Optimasi Cache Laravel
+php artisan config:cache
+php artisan route:cache
 php artisan view:cache
+php artisan event:cache
 ```
 
 ---
 
-## Struktur Project
-
-```
-rinsa/
-├── app/
-│   ├── Http/
-│   │   ├── Controllers/
-│   │   │   ├── AuthController.php        ← Login/logout
-│   │   │   ├── DashboardController.php   ← Dashboard summary
-│   │   │   ├── OrderController.php       ← CRUD order + status log
-│   │   │   ├── CustomerController.php    ← CRUD pelanggan
-│   │   │   ├── ReportController.php      ← Laporan & filter periode
-│   │   │   └── TrackingController.php    ← Public tracking
-│   │   └── Middleware/
-│   │       └── EnsureUserIsActive.php    ← Block user nonaktif
-│   └── Models/
-│       ├── User.php
-│       ├── Customer.php
-│       ├── Order.php                     ← PRICE_MAP, STATUS_FLOW, helpers
-│       └── OrderStatusLog.php            ← Audit trail setiap ganti status
-│
-├── database/
-│   ├── migrations/                       ← 4 migrations
-│   └── seeders/
-│       └── DatabaseSeeder.php            ← Demo data lengkap
-│
-├── resources/
-│   ├── css/app.css                       ← Brand styles Rinsa (no Tailwind)
-│   ├── js/app.js
-│   └── views/
-│       ├── layouts/app.blade.php         ← Main authenticated layout
-│       ├── auth/login.blade.php
-│       ├── admin/
-│       │   ├── dashboard.blade.php
-│       │   ├── report.blade.php
-│       │   ├── orders/{index,create,edit,show}.blade.php
-│       │   └── customers/{index,create,edit}.blade.php
-│       └── tracking/
-│           ├── index.blade.php           ← Public tracking form
-│           └── result.blade.php          ← Hasil tracking + timeline
-│
-├── routes/web.php                        ← Semua routes
-└── bootstrap/app.php                     ← Middleware alias registration
-```
-
----
-
-## Fitur
-
-| Fitur | Status |
-|-------|--------|
-| Login / logout dengan session | ✅ |
-| Guard: block user nonaktif | ✅ |
-| Dashboard metrik real-time | ✅ |
-| CRUD Order + kalkulasi harga otomatis | ✅ |
-| Status log / audit trail per order | ✅ |
-| CRUD Pelanggan | ✅ |
-| Search & filter order | ✅ |
-| Laporan dengan filter periode | ✅ |
-| Tracking publik (tanpa login) | ✅ |
-| Responsive mobile (bottom nav) | ✅ |
-| Pagination | ✅ |
-| Flash messages auto-dismiss | ✅ |
-
----
-
-## Harga Layanan (edit di `app/Models/Order.php`)
-
-```php
-public const PRICE_MAP = [
-    'cuci_kering'  => 6000,   // per kg
-    'cuci_setrika' => 8000,   // per kg
-    'express'      => 12000,  // per kg
-];
-```
+## 💡 10. Troubleshooting (Penyelesaian Masalah)
+Jika Anda mengalami *error*, cek kemungkinan berikut:
+- **Error `No supported encrypter found`**: Anda lupa menjalankan `php artisan key:generate`.
+- **Error `Connection refused` (Terkait Database)**: Pastikan aplikasi MySQL/XAMPP sudah *Running* / *Start*.
+- **Tampilan UI hancur / CSS tidak termuat**: Pastikan Terminal 2 (`npm run dev`) sedang menyala. Jika Anda tidak ingin membiarkan terminal nyala terus, jalankan saja `npm run build` sekali.
+- **Error `Permission denied` pada Mac/Linux**: Jalankan perintah perizinan direktori berikut: `chmod -R 775 storage bootstrap/cache`
