@@ -18,6 +18,7 @@ class OrderForm extends Component
     public string $status       = 'pending';
     public string $notes        = '';
     public string $estimatedDone = '';
+    public string $deliveryOption = 'pickup';
 
     // Editing context
     public ?int $orderId = null;
@@ -35,6 +36,7 @@ class OrderForm extends Component
             'status'        => ['required', 'in:pending,washing,done,pickup'],
             'notes'         => ['nullable', 'string', 'max:500'],
             'estimatedDone' => ['nullable', 'date'],
+            'deliveryOption'=> ['required', 'in:pickup,delivery'],
         ];
     }
 
@@ -51,6 +53,7 @@ class OrderForm extends Component
             $this->status        = $order->status;
             $this->notes         = $order->notes ?? '';
             $this->estimatedDone = $order->estimated_done?->format('Y-m-d') ?? '';
+            $this->deliveryOption = $order->delivery_option ?? 'pickup';
         }
 
         $this->recalculate();
@@ -62,19 +65,21 @@ class OrderForm extends Component
 
     private function recalculate(): void
     {
+        $weight = is_numeric($this->weightKg) ? (float) $this->weightKg : 0;
         $price            = Order::PRICE_MAP[$this->service] ?? 0;
         $this->pricePerKg = number_format($price, 0, ',', '.');
-        $this->totalPrice = (float) $this->weightKg * $price;
+        $this->totalPrice = $weight * $price;
     }
 
     public function save()
     {
         $this->validate();
 
+        $weight = (float) $this->weightKg;
         $pricePerKg = Order::PRICE_MAP[$this->service];
-        $total      = $this->weightKg * $pricePerKg;
+        $total      = $weight * $pricePerKg;
 
-        DB::transaction(function () use ($pricePerKg, $total) {
+        DB::transaction(function () use ($pricePerKg, $total, $weight) {
             if ($this->orderId) {
                 // UPDATE
                 $order     = Order::findOrFail($this->orderId);
@@ -82,13 +87,14 @@ class OrderForm extends Component
 
                 $order->update([
                     'customer_id'    => $this->customerId,
-                    'weight_kg'      => $this->weightKg,
+                    'weight_kg'      => $weight,
                     'service'        => $this->service,
                     'status'         => $this->status,
                     'price_per_kg'   => $pricePerKg,
                     'total_price'    => $total,
                     'notes'          => $this->notes ?: null,
                     'estimated_done' => $this->estimatedDone ?: null,
+                    'delivery_option' => $this->deliveryOption,
                     'picked_up_at'   => $this->status === 'pickup' && $oldStatus !== 'pickup'
                                          ? now() : $order->picked_up_at,
                 ]);
@@ -107,13 +113,14 @@ class OrderForm extends Component
                     'order_code'     => Order::generateCode(),
                     'customer_id'    => $this->customerId,
                     'created_by'     => Auth::id(),
-                    'weight_kg'      => $this->weightKg,
+                    'weight_kg'      => $weight,
                     'service'        => $this->service,
                     'status'         => 'pending',
                     'price_per_kg'   => $pricePerKg,
                     'total_price'    => $total,
                     'notes'          => $this->notes ?: null,
                     'estimated_done' => $this->estimatedDone ?: now()->addDay(),
+                    'delivery_option' => $this->deliveryOption,
                 ]);
 
                 OrderStatusLog::create([

@@ -1,0 +1,1 @@
+document.addEventListener("DOMContentLoaded",()=>{document.querySelectorAll(".alert").forEach(e=>{setTimeout(()=>{e.style.transition="opacity .4s",e.style.opacity="0",setTimeout(()=>e.remove(),400)},4e3)})});

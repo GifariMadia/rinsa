@@ -21,6 +21,10 @@ class Order extends Model
         'notes',
         'estimated_done',
         'picked_up_at',
+        'delivery_option',
+        'feedback',
+        'complaint',
+        'rating',
     ];
 
     protected $casts = [
@@ -93,5 +97,10 @@ class Order extends Model
     public function isPickedUp(): bool
     {
         return $this->status === 'pickup';
+    }
+
+    public function getRouteKeyName()
+    {
+        return 'order_code';
     }
 }

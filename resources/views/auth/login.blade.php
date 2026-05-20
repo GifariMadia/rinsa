@@ -33,9 +33,9 @@
     <form method="POST" action="{{ route('login.post') }}">
         @csrf
         <div class="form-group">
-            <label class="form-label">Email</label>
-            <input type="email" name="email" class="form-input"
-                   value="{{ old('email') }}" placeholder="admin@rinsa.id" required autofocus />
+            <label class="form-label">Email atau No. HP</label>
+            <input type="text" name="login" class="form-input"
+                   value="{{ old('login') }}" placeholder="admin@rinsa.id atau 0812..." required autofocus />
         </div>
         <div class="form-group">
             <label class="form-label">Password</label>

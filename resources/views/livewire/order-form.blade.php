@@ -61,6 +61,15 @@
             </div>
             @endif
 
+            <div class="form-group">
+                <label class="form-label">Opsi Pengambilan / Pengiriman</label>
+                <select wire:model="deliveryOption" class="form-select" required>
+                    <option value="pickup">Pickup (Ambil Sendiri)</option>
+                    <option value="delivery">Delivery (Kirim ke Alamat)</option>
+                </select>
+                @error('deliveryOption') <span style="color:var(--rinsa-red);font-size:.78rem">{{ $message }}</span> @enderror
+            </div>
+
             <div class="form-row">
                 <div class="form-group">
                     <label class="form-label">Estimasi Selesai</label>

@@ -33,6 +33,43 @@
     </div>
 </div>
 
+{{-- History & Rating Panel --}}
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem">
+    <div class="section-title" style="margin:0">History & Rating Terbaru</div>
+    <a href="{{ route('orders.index') }}" style="font-size:.8rem;color:var(--rinsa-green);font-weight:600;text-decoration:none">
+        Lihat semua →
+    </a>
+</div>
+
+<div class="form-card" style="padding: 1.25rem; margin-bottom: 2rem; border-left: 4px solid var(--rinsa-gold)">
+    <div style="display:flex; flex-direction:column; gap:1rem">
+        @forelse($latestFeedbacks as $f)
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; padding-bottom: 0.75rem; border-bottom: 1px solid var(--rinsa-border-light)">
+            <div>
+                <div style="font-weight:700; font-size:.85rem">{{ $f->customer->name }}</div>
+                <div style="color:var(--rinsa-gold); font-size:.9rem; margin: 2px 0">
+                    @for($i = 1; $i <= 5; $i++)
+                        {{ $i <= $f->rating ? '★' : '☆' }}
+                    @endfor
+                </div>
+                <div style="font-size:.8rem; color:var(--rinsa-gray); font-style:italic">
+                    "{{ Str::limit($f->feedback ?? $f->complaint ?? 'Tanpa komentar', 60) }}"
+                </div>
+            </div>
+            <div style="text-align:right; font-size:.7rem; color:var(--rinsa-gray-light)">
+                {{ $f->updated_at->diffForHumans() }}
+                <br>
+                <a href="{{ route('orders.show', $f) }}" style="color:var(--rinsa-green); text-decoration:none; font-weight:600">Detail</a>
+            </div>
+        </div>
+        @empty
+        <div style="text-align:center; color:var(--rinsa-gray); font-size:.85rem; padding: 1rem">
+            Belum ada feedback terbaru.
+        </div>
+        @endforelse
+    </div>
+</div>
+
 {{-- Recent Orders --}}
 <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem">
     <div class="section-title" style="margin:0">Order Terbaru</div>

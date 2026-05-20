@@ -1,0 +1,129 @@
+﻿{
+    "rinsa-fitur-profil-premium":  {
+                                       "featurePath":  "C:\\Users\\ASUS\\Workspace\\02_projects\\web\\fullstack\\rinsa\\new features\\rinsa-fitur-profil-premium",
+                                       "onlyInFeature":  [
+                                                             "app\\Http\\Controllers\\Controller.php",
+                                                             "app\\Http\\Controllers\\ProfileController.php",
+                                                             "database\\migrations\\2026_05_10_105531_add_avatar_and_bio_to_users_table.php",
+                                                             "public\\hot",
+                                                             "public\\index.php",
+                                                             "resources\\views\\home.blade.php",
+                                                             "resources\\views\\profile\\edit.blade.php",
+                                                             "resources\\views\\profile\\index.blade.php"
+                                                         ],
+                                       "onlyInMain":  [
+
+                                                      ],
+                                       "different":  [
+                                                         "app\\Models\\User.php",
+                                                         "resources\\css\\app.css",
+                                                         "resources\\views\\layouts\\app.blade.php",
+                                                         "routes\\web.php"
+                                                     ],
+                                       "counts":  {
+                                                      "onlyInFeature":  8,
+                                                      "onlyInMain":  0,
+                                                      "different":  4,
+                                                      "common":  44
+                                                  }
+                                   },
+    "rinsa-damar-feature":  {
+                                "featurePath":  "C:\\Users\\ASUS\\Workspace\\02_projects\\web\\fullstack\\rinsa\\new features\\rinsa-damar-feature",
+                                "onlyInFeature":  [
+
+                                                  ],
+                                "onlyInMain":  [
+
+                                               ],
+                                "different":  [
+
+                                              ],
+                                "counts":  {
+                                               "onlyInFeature":  0,
+                                               "onlyInMain":  0,
+                                               "different":  0,
+                                               "common":  44
+                                           }
+                            },
+    "yaa gitu":  {
+                     "featurePath":  "C:\\Users\\ASUS\\Workspace\\02_projects\\web\\fullstack\\rinsa\\new features\\yaa gitu",
+                     "onlyInFeature":  [
+                                           "app\\Http\\Controllers\\Controller.php",
+                                           "app\\Http\\Controllers\\HistoryController.php",
+                                           "app\\Http\\Controllers\\ProfileController.php",
+                                           "app\\Http\\Middleware\\AdminOnly.php",
+                                           "database\\migrations\\2026_05_10_105531_add_avatar_and_bio_to_users_table.php",
+                                           "database\\migrations\\2026_05_13_124505_add_feedback_to_orders_table.php",
+                                           "database\\migrations\\2026_05_13_150504_add_customer_role_to_users_table.php",
+                                           "public\\hot",
+                                           "public\\index.php",
+                                           "resources\\views\\admin\\customer_dashboard.blade.php",
+                                           "resources\\views\\admin\\feedback.blade.php",
+                                           "resources\\views\\auth\\register.blade.php",
+                                           "resources\\views\\history\\feedback.blade.php",
+                                           "resources\\views\\history\\index.blade.php",
+                                           "resources\\views\\history\\list.blade.php",
+                                           "resources\\views\\home.blade.php",
+                                           "resources\\views\\profile\\edit.blade.php",
+                                           "resources\\views\\profile\\index.blade.php"
+                                       ],
+                     "onlyInMain":  [
+
+                                    ],
+                     "different":  [
+                                       "app\\Http\\Controllers\\AuthController.php",
+                                       "app\\Http\\Controllers\\DashboardController.php",
+                                       "app\\Models\\Order.php",
+                                       "app\\Models\\User.php",
+                                       "bootstrap\\app.php",
+                                       "resources\\css\\app.css",
+                                       "resources\\views\\admin\\dashboard.blade.php",
+                                       "resources\\views\\admin\\orders\\show.blade.php",
+                                       "resources\\views\\auth\\login.blade.php",
+                                       "resources\\views\\layouts\\app.blade.php",
+                                       "routes\\web.php"
+                                   ],
+                     "counts":  {
+                                    "onlyInFeature":  18,
+                                    "onlyInMain":  0,
+                                    "different":  11,
+                                    "common":  44
+                                }
+                 },
+    "rinsa-new-feature-add":  {
+                                  "featurePath":  "C:\\Users\\ASUS\\Workspace\\02_projects\\web\\fullstack\\rinsa\\new features\\rinsa-new-feature-add",
+                                  "onlyInFeature":  [
+
+                                                    ],
+                                  "onlyInMain":  [
+
+                                                 ],
+                                  "different":  [
+
+                                                ],
+                                  "counts":  {
+                                                 "onlyInFeature":  0,
+                                                 "onlyInMain":  0,
+                                                 "different":  0,
+                                                 "common":  44
+                                             }
+                              },
+    "rinsa-fitur-login":  {
+                              "featurePath":  "C:\\Users\\ASUS\\Workspace\\02_projects\\web\\fullstack\\rinsa\\new features\\rinsa-fitur-login",
+                              "onlyInFeature":  [
+
+                                                ],
+                              "onlyInMain":  [
+
+                                             ],
+                              "different":  [
+
+                                            ],
+                              "counts":  {
+                                             "onlyInFeature":  0,
+                                             "onlyInMain":  0,
+                                             "different":  0,
+                                             "common":  44
+                                         }
+                          }
+}

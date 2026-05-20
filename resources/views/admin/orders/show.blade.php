@@ -63,6 +63,32 @@
             @endif
         </div>
     </div>
+    
+    @if($order->rating)
+    {{-- Feedback Card --}}
+    <div class="form-card" style="margin-bottom:1rem; border-left: 4px solid var(--rinsa-gold)">
+        <div class="section-title" style="margin-bottom:.75rem">Feedback Pelanggan</div>
+        <div style="display:flex; flex-direction:column; gap:0.5rem">
+            <div style="color:var(--rinsa-gold); font-size:1.1rem; letter-spacing:1px">
+                @for($i = 1; $i <= 5; $i++)
+                    {{ $i <= $order->rating ? '★' : '☆' }}
+                @endfor
+            </div>
+            @if($order->feedback)
+            <div style="font-size:.9rem; color:var(--rinsa-dark)">
+                <strong style="color:var(--rinsa-gray); font-size:.7rem; text-transform:uppercase; display:block; margin-bottom:2px">Feedback:</strong>
+                {{ $order->feedback }}
+            </div>
+            @endif
+            @if($order->complaint)
+            <div style="font-size:.9rem; color:var(--rinsa-red); background: #FEF2F2; padding: 10px; border-radius: 8px; margin-top: 5px">
+                <strong style="color:var(--rinsa-red); font-size:.7rem; text-transform:uppercase; display:block; margin-bottom:2px">Komplain:</strong>
+                {{ $order->complaint }}
+            </div>
+            @endif
+        </div>
+    </div>
+    @endif
 
     {{-- Status Timeline --}}
     <div class="form-card" style="margin-bottom:1rem">
@@ -78,19 +104,22 @@
                     $log = $order->statusLogs->firstWhere('new_status', $status);
                     $state = $i < $curIdx ? 'done' : ($i === $curIdx ? 'active' : 'pending');
                 @endphp
-                <div class="status-step">
-                    <div class="step-dot {{ $state }}"></div>
-                    <div class="step-line">
-                        <div class="step-label" style="color: {{ $state === 'pending' ? 'var(--rinsa-gray)' : 'var(--rinsa-dark)' }}">
+                <div class="status-step" style="display: flex; align-items: flex-start; gap: 1rem; margin-bottom: 1.5rem; position: relative;">
+                    <div class="step-dot {{ $state }}" style="width: 20px; height: 20px; border-radius: 50%; flex-shrink: 0; margin-top: 2px; border: 3px solid #fff; z-index: 2; background: {{ $state === 'done' ? 'var(--rinsa-green)' : ($state === 'active' ? 'var(--rinsa-gold)' : '#e5e7eb') }}; box-shadow: 0 0 0 2px {{ $state === 'done' ? 'var(--rinsa-green)' : ($state === 'active' ? 'var(--rinsa-gold)' : '#e5e7eb') }};"></div>
+                    @if(!$loop->last)
+                        <div class="step-line" style="position: absolute; left: 9px; top: 22px; bottom: -1.5rem; width: 2px; background: #e5e7eb; z-index: 1;"></div>
+                    @endif
+                    <div class="step-content" style="flex: 1;">
+                        <div class="step-label" style="font-size: 1rem; font-weight: 700; color: {{ $state === 'pending' ? 'var(--rinsa-gray)' : 'var(--rinsa-dark)' }}">
                             {{ $statusLabels[$status] }}
                         </div>
                         @if($log)
-                        <div class="step-time">
+                        <div class="step-time" style="font-size: .8rem; color: var(--rinsa-gray); margin-top: 4px;">
                             {{ $log->changed_at->format('d M Y, H:i') }}
                             · oleh {{ $log->changedBy->name }}
                         </div>
                         @else
-                        <div class="step-time">—</div>
+                        <div class="step-time" style="font-size: .8rem; color: var(--rinsa-gray); margin-top: 4px;">—</div>
                         @endif
                     </div>
                 </div>

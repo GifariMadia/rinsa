@@ -14,21 +14,36 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         // === USERS ===
-        $admin = User::create([
-            'name'      => 'Admin Rinsa',
-            'email'     => 'admin@rinsa.id',
-            'password'  => Hash::make('rinsa123'),
-            'role'      => 'admin',
-            'is_active' => true,
-        ]);
+        $admin = User::updateOrCreate(
+            ['email' => 'admin@rinsa.id'],
+            [
+                'name'      => 'Admin Rinsa',
+                'password'  => Hash::make('rinsa123'),
+                'role'      => 'admin',
+                'is_active' => true,
+            ]
+        );
 
-        User::create([
-            'name'      => 'Kasir Rinsa',
-            'email'     => 'kasir@rinsa.id',
-            'password'  => Hash::make('rinsa123'),
-            'role'      => 'kasir',
-            'is_active' => true,
-        ]);
+        User::updateOrCreate(
+            ['email' => 'kasir@rinsa.id'],
+            [
+                'name'      => 'Kasir Rinsa',
+                'password'  => Hash::make('rinsa123'),
+                'role'      => 'kasir',
+                'is_active' => true,
+            ]
+        );
+
+        User::updateOrCreate(
+            ['email' => 'customer@rinsa.id'],
+            [
+                'name'      => 'Customer Rinsa',
+                'phone'     => '08123456789',
+                'password'  => Hash::make('rinsa123'),
+                'role'      => 'customer',
+                'is_active' => true,
+            ]
+        );
 
         // === CUSTOMERS ===
         $customers = [

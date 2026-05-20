@@ -45,7 +45,12 @@
                     <td><span style="font-family:monospace;font-size:.78rem;color:var(--rinsa-gray)">{{ $order->order_code }}</span></td>
                     <td>{{ $order->customer->name }}</td>
                     <td>{{ $order->weight_kg }} kg</td>
-                    <td style="font-size:.8rem">{{ $order->service_label }}</td>
+                    <td style="font-size:.8rem">
+                        {{ $order->service_label }}<br>
+                        <span style="font-size:.7rem; color:var(--rinsa-gray)">
+                            {{ $order->delivery_option === 'delivery' ? 'Kirim Kurir' : 'Ambil Sendiri' }}
+                        </span>
+                    </td>
                     <td><span class="badge badge-{{ $order->status }}">{{ $order->status_label }}</span></td>
                     <td>Rp {{ number_format($order->total_price, 0, ',', '.') }}</td>
                     <td style="font-size:.78rem;color:var(--rinsa-gray)">{{ $order->created_at->format('d M Y') }}</td>
@@ -76,7 +81,10 @@
                 <span class="badge badge-{{ $order->status }}">{{ $order->status_label }}</span>
             </div>
             <div class="order-mobile-meta">
-                <span class="order-mobile-detail">{{ $order->weight_kg }} kg · {{ $order->service_label }}</span>
+                <span class="order-mobile-detail">
+                    {{ $order->weight_kg }} kg · {{ $order->service_label }} · 
+                    {{ $order->delivery_option === 'delivery' ? 'Kirim Kurir' : 'Ambil Sendiri' }}
+                </span>
                 <span class="order-mobile-price">Rp {{ number_format($order->total_price, 0, ',', '.') }}</span>
             </div>
             <div class="order-mobile-actions">

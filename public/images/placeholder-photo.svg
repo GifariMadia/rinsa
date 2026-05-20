@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" role="img" aria-label="Placeholder image">
+  <rect width="800" height="600" fill="#F3F4F6"/>
+  <path d="M120 470L300 290l120 120 160-160 160 220H120z" fill="#D1D5DB"/>
+  <circle cx="270" cy="230" r="55" fill="#D1D5DB"/>
+  <rect x="120" y="120" width="560" height="360" rx="24" ry="24" fill="none" stroke="#9CA3AF" stroke-width="8"/>
+  <text x="400" y="540" text-anchor="middle" font-family="system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif" font-size="22" fill="#6B7280">
+    Gambar tidak tersedia
+  </text>
+</svg>
